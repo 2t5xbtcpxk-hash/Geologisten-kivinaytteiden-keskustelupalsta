@@ -1,4 +1,4 @@
-# Geologisten-kivinaytteiden-keskustelupalsta
+# Geologisten kivinäytteiden keskustelupalsta
 
 ## Sovelluksen toiminnot
 * Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
