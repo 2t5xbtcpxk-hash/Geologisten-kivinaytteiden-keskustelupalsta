@@ -13,9 +13,9 @@
 
 Asenna 'flask'-kirjasto, jos tätä ei ole jo asennettu
 
-'''
+```
 $ pip install flask
-'''
+```
 
 Luo tietokannan taulut
 
