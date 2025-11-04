@@ -11,7 +11,7 @@
 * Käyttäjä pystyy esittämään kirjattuun kivilajiin kysymyksen / kysymyksiä, joihin muut käyttäjät voivat vastata.
 
 
-Asenna 'flask'-kirjasto, jos tätä ei ole jo asennettu
+Asenna `flask`-kirjasto, jos tätä ei ole jo asennettu
 
 ```
 $ pip install flask
