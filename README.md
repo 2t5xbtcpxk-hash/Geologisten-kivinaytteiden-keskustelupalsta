@@ -23,7 +23,9 @@ Luo tietokannan taulut
 $ sqlite3 database.db < tables.sql
 ```
 
+
 Aluksi sivustolla ei ole mitään lisäyksiä, mutta tässä esimerkkejä, joita voi lisätä:
+Huomioi, että sivustolle täytyy olla kirjautunut, jotta voi tehdä lisäyksiä.
 
 ## Lisäyksiä
 * Kivilaji: Graniitti, Kuvaus: Felsinen syväkivi
