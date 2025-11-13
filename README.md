@@ -11,7 +11,7 @@
 * Käyttäjä pystyy esittämään kirjattuun kivilajiin kysymyksen / kysymyksiä, joihin muut käyttäjät voivat vastata.
 
 
-Asenna 'flask'-kirjasto, jos tätä ei ole jo asennettu
+Asenna `flask`-kirjasto, jos tätä ei ole jo asennettu
 
 ```
 $ pip install flask
@@ -22,6 +22,7 @@ Luo tietokannan taulut
 ```
 $ sqlite3 database.db < tables.sql
 ```
+<<<<<<< HEAD
 
 Aluksi sivustolla ei ole mitään lisäyksiä, mutta tässä esimerkkejä, joita voi lisätä:
 
@@ -29,3 +30,5 @@ Aluksi sivustolla ei ole mitään lisäyksiä, mutta tässä esimerkkejä, joita
 * Kivilaji: Graniitti, Kuvaus: Felsinen syväkivi
 * Kivilaji: Grabro, Kuvaus: Mafinen syväkivi
 * Kivilaji: Fylliitti, Kuvaus: Alhaisen metamorfisen asteen metapelliitti
+=======
+>>>>>>> b311ee9158de0de2efe8aad31a500cdd989b1203
