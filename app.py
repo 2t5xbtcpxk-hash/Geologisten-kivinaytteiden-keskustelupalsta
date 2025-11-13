@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, abort
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 import config
@@ -17,7 +17,6 @@ def index():
     threads = forum.get_threads()
     return render_template("main.html", threads = forum.get_threads())
 
-    
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -29,7 +28,7 @@ def login():
 
         user_id = users.check_login(username, password)
         if user_id:
-            session["user_id"] = username
+            session["user_id"] = user_id
             return redirect("/")
         else:
             return "VIRHE: väärä tunnus tai salasana"
@@ -59,3 +58,156 @@ def create():
         return "VIRHE: tunnus on jo varattu"
 
     return redirect("/login")
+
+@app.route("/new_thread", methods=["POST"])
+def new_thread():
+
+    require_login()
+
+    title = request.form["title"]
+    comment = request.form["comment"]
+    user_id = session["user_id"]
+
+    if not comment or len(comment) > 1000:
+        abort(403)
+
+    if not title or len(title) > 100:
+        abort(403)
+
+    thread_id = forum.add_thread(title, comment, user_id)
+    return redirect("/thread/" + str(thread_id))
+
+@app.route("/thread/<int:thread_id>")
+def show_thread(thread_id):
+    thread = forum.get_thread(thread_id)
+
+    if not thread:
+        abort(404)
+
+    messages = forum.get_messages(thread_id)
+    return render_template("thread.html", thread=thread, messages=messages)
+
+@app.route("/new_message", methods=["POST"])
+def new_message():
+
+    require_login()
+
+    content = request.form["content"]
+    user_id = session["user_id"]
+    thread_id = request.form["thread_id"]
+
+    if not content or len(content) > 1000:
+        abort(403)
+
+    try:
+        forum.add_message(content, user_id, thread_id)
+    except:
+        abort(403)
+
+    return redirect("/thread/" + str(thread_id))
+
+@app.route("/edit/<int:message_id>", methods=["GET", "POST"])
+def edit_message(message_id):
+
+    require_login()
+
+    message = forum.get_message(message_id)
+
+    if not message:
+        abort(404)
+
+    if message["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("edit.html", message=message)
+
+    if request.method == "POST":
+        content = request.form["content"]
+
+        if not content or len(content) > 1000:
+            abort(403)
+
+        forum.update_message(message["id"], content)
+        return redirect("/thread/" + str(message["thread_id"]))
+    
+@app.route("/remove/<int:message_id>", methods=["GET", "POST"])
+def remove_message(message_id):
+
+    require_login()
+
+    message = forum.get_message(message_id)
+    
+    if not message:
+        abort(404)
+    
+    if message["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("remove.html", message=message)
+
+    if request.method == "POST":
+        if "continue" in request.form:
+            forum.remove_message(message["id"])
+        return redirect("/thread/" + str(message["thread_id"]))
+    
+@app.route("/remove_thread/<int:thread_id>", methods=["GET", "POST"])
+def remove_thread(thread_id):
+
+    require_login()
+
+    thread = forum.get_thread(thread_id)
+
+    if not thread:
+        abort(404)
+
+    if thread["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("remove_thread.html", thread=thread)
+
+    if request.method == "POST":
+        if "continue" in request.form:
+            forum.remove_thread(thread["id"])
+        return redirect("/")
+    
+@app.route("/edit_thread/<int:thread_id>", methods=["GET", "POST"])
+def edit_thread(thread_id):
+
+    require_login()
+
+    thread = forum.get_thread(thread_id)
+
+    if not thread:
+        abort(404)
+
+    if thread["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("edit_thread.html", thread=thread)
+
+    if request.method == "POST":
+        title = request.form["title"]
+        comment = request.form["comment"]
+
+        if not comment or len(comment) > 1000:
+            abort(403)
+        
+        if not title or len(title) > 100:
+            abort(403)
+
+        forum.update_thread(thread["id"], title, comment)
+        return redirect("/")
+    
+@app.route("/search")
+def search():
+    query = request.args.get("query")
+    results = forum.search(query) if query else []
+    return render_template("search.html", query=query, results=results)
+    
+def require_login():
+    if "user_id" not in session:
+        abort(403)

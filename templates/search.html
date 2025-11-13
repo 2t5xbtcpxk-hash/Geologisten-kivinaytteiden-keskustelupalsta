@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Haku</title>
+</head>
+
+<body>
+  <h1>Hae näytteitä</h1>
+
+  <form action="/search" method="get">
+    <p>
+      Hakusana:
+      {% if query %}
+      <input type="text" name="query" value="{{ query }}" />
+      {% else %}
+      <input type="text" name="query" />
+      {% endif %}
+    </p>
+    <input type="submit" value="Hae" />
+  </form>
+
+  {% if query %}
+  <hr />
+  <h2>Tulokset</h2>
+  
+    {% if results | count == 0 %}
+
+      <p>
+        Ei tuloksia
+      </p>
+
+    {% else %}
+
+      <ul>
+      {% for result in results %}
+        <li>
+          <a href="/thread/{{ result.thread_id }}">
+            {{ result.title }}
+          </a>
+          <br />
+          Näytteen lisännyt {{ result.username }}
+        </li>
+      {% endfor %}
+      </ul>
+  
+    {% endif %}
+  {% endif %}
+
+  <p>
+    <a href="/">Takaisin Etusivulle</a>
+  </p>
+
+</body>
+
+</html>

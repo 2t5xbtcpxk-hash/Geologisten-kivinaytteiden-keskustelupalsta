@@ -1,0 +1,14 @@
+<form action="/edit_thread/{{ thread.id }}" method="post">
+  <p>
+      Kivilaji: <br />
+      <textarea name="title" maxlength="100" required>{{ thread.title }}</textarea>
+  </p>
+    Kuvaus:<br />
+    <textarea name="comment" rows="5" cols="40" maxlength="1000" required>{{ thread.comment }}</textarea>
+  </p>
+  <input type="submit" value="Lähetä" />
+</form>
+
+<p>
+  <a href="/">Takaisin Etusivulle</a>
+</p>

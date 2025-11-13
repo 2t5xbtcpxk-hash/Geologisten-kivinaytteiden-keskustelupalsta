@@ -7,6 +7,43 @@
     <p>
       Olet kirjautunut nimellä {{ session.user_id }}
     </p>
+
+    <a href="/search">Hae lisättyjä näytteitä</a>
+    
+    <h2>Lisättyjä näytteitä</h2>
+
+    {% for thread in threads %}
+      <p>
+        <a href="/thread/{{ thread.id }}">{{ thread.title }}</a>
+        <br />
+        {% if thread.total == 0 %}
+          <p>Ei vielä kommentteja</p>
+        {% else %}
+          {{ thread.total }} kommenttia, uusin {{ thread.last }}
+        {% endif %}
+      </p>
+      {% if thread.user_id == session.user_id %}
+      <p>
+        <a href="/edit_thread/{{ thread.id }}">Muokkaa</a> |
+        <a href="/remove_thread/{{ thread.id }}">Poista</a>
+      </p>
+      {% endif %}
+      <hr />
+    {% endfor %}
+
+    <h2>Uusi lisäys</h2>
+
+    <form action="/new_thread" method="post">
+      <p>
+        Kivilaji: <br />
+        <input type="text" name="title" maxlength="100" required/>
+      </p>
+      <p>
+        Kuvaus: <br />
+        <textarea name="comment" rows="5" cols="40" maxlength="1000" required></textarea>
+      </p>
+      <input type="submit" value="Lähetä" />
+    </form>
     <p>
       <a href="/logout">Kirjaudu ulos</a>
     </p>
@@ -16,11 +53,20 @@
       <a href="/login">Kirjaudu sisään</a> |
       <a href="/register">Luo käyttäjä</a>
     </p>
+
+    <a href="/search">Hae lisättyjä näytteitä</a>
+
+    <h2>Lisättyjä näytteitä</h2>
+
     {% for thread in threads %}
       <p>
         <a href="/thread/{{ thread.id }}">{{ thread.title }}</a>
         <br />
-        {{ thread.total }} viestiä, uusin {{ thread.last }}
+        {% if thread.total == 0 %}
+          <p>Ei vielä kommentteja</p>
+        {% else %}
+          {{ thread.total }} kommenttia, uusin {{ thread.last }}
+        {% endif %}
       </p>
       <hr />
     {% endfor %}

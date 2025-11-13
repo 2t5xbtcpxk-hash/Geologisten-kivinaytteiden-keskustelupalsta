@@ -1,11 +1,13 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
-    password_hash TEXT);
+    password_hash TEXT
+);
 
 CREATE TABLE IF NOT EXISTS threads (
     id INTEGER PRIMARY KEY,
     title TEXT,
+    comment TEXT,
     user_id INTEGER REFERENCES users
 );
 
@@ -14,5 +16,5 @@ CREATE TABLE IF NOT EXISTS messages (
     content TEXT,
     sent_at TEXT,
     user_id INTEGER REFERENCES users,
-    thread_id INTEGER REFERENCES threads
+    thread_id INTEGER REFERENCES threads ON DELETE CASCADE
 );
