@@ -17,4 +17,21 @@ def check_login(username, password):
 
     return None
 
+def get_user(user_id):
+    sql = "SELECT username, id AS user_id FROM users WHERE id = ?"
+    result = db.query(sql, [user_id])
+    return result[0] if result else None
 
+def get_threads(user_id):
+    sql = """SELECT t.id AS thread_id,
+                    t.title,
+                    t.comment,
+                    t.user_id AS user_id,
+                    IFNULL(COUNT(m.id), 0) total
+             FROM threads t LEFT JOIN messages m
+             ON t.id = m.thread_id
+             WHERE t.user_id = ?
+             GROUP BY t.id;"""
+    
+    result = db.query(sql, [user_id])
+    return result if result else None

@@ -2,6 +2,7 @@ from flask import Flask
 from flask import redirect, render_template, request, session, abort
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
+import secrets
 import config
 import sqlite3
 import db, users, forum
@@ -15,10 +16,12 @@ app.secret_key = config.secret_key
 @app.route("/")
 def index():
     threads = forum.get_threads()
+    #check_csrf()
     return render_template("main.html", threads = forum.get_threads())
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "GET":
         return render_template("login.html")
 
@@ -29,6 +32,7 @@ def login():
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             return "VIRHE: väärä tunnus tai salasana"
@@ -63,6 +67,7 @@ def create():
 def new_thread():
 
     require_login()
+    check_csrf()
 
     title = request.form["title"]
     comment = request.form["comment"]
@@ -91,6 +96,7 @@ def show_thread(thread_id):
 def new_message():
 
     require_login()
+    check_csrf()
 
     content = request.form["content"]
     user_id = session["user_id"]
@@ -124,6 +130,7 @@ def edit_message(message_id):
 
     if request.method == "POST":
         content = request.form["content"]
+        check_csrf()
 
         if not content or len(content) > 1000:
             abort(403)
@@ -148,6 +155,7 @@ def remove_message(message_id):
         return render_template("remove.html", message=message)
 
     if request.method == "POST":
+        check_csrf()
         if "continue" in request.form:
             forum.remove_message(message["id"])
         return redirect("/thread/" + str(message["thread_id"]))
@@ -169,6 +177,7 @@ def remove_thread(thread_id):
         return render_template("remove_thread.html", thread=thread)
 
     if request.method == "POST":
+        check_csrf()
         if "continue" in request.form:
             forum.remove_thread(thread["id"])
         return redirect("/")
@@ -192,6 +201,7 @@ def edit_thread(thread_id):
     if request.method == "POST":
         title = request.form["title"]
         comment = request.form["comment"]
+        check_csrf()
 
         if not comment or len(comment) > 1000:
             abort(403)
@@ -207,7 +217,29 @@ def search():
     query = request.args.get("query")
     results = forum.search(query) if query else []
     return render_template("search.html", query=query, results=results)
+
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+
+    require_login()
+
+    user = users.get_user(user_id)
+
+    if not user:
+        abort(404)
+
+    if user["user_id"] != session["user_id"]:
+        abort(403)
+
+    threads = users.get_threads(user_id)
+    return render_template("user.html", user=user, threads=threads)
     
 def require_login():
     if "user_id" not in session:
+        abort(403)
+
+def check_csrf():
+    print(session["csrf_token"])
+    print(request.form["csrf_token"])
+    if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)

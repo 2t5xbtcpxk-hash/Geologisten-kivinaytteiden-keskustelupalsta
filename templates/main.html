@@ -5,7 +5,8 @@
 <body>
   {% if session.user_id %}
     <p>
-      Olet kirjautunut nimellä {{ session.user_id }}
+      Olet kirjautunut nimellä {{ session.user_id }} |
+      <a href="/user/{{ session.user_id }}">Käyttäjäsivu</a>
     </p>
 
     <a href="/search">Hae lisättyjä näytteitä</a>
@@ -42,6 +43,7 @@
         Kuvaus: <br />
         <textarea name="comment" rows="5" cols="40" maxlength="1000" required></textarea>
       </p>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       <input type="submit" value="Lähetä" />
     </form>
     <p>
