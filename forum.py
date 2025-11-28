@@ -2,16 +2,18 @@ import db
 
 
 def get_threads():
-    sql = """SELECT t.id id, t.user_id user_id, t.title, IFNULL(COUNT(m.id), 0) total, IFNULL(MAX(m.sent_at), "-") last
+    sql = """SELECT t.id id, t.user_id user_id, t.title, c.rocktype rocktype, t.rock rock, IFNULL(COUNT(m.id), 0) total, IFNULL(MAX(m.sent_at), "-") last
              FROM threads t LEFT JOIN messages m
-             ON t.id = m.thread_id
+                            ON t.id = m.thread_id
+                            LEFT JOIN classes as c 
+                            ON t.classes_id = c.id
              GROUP BY t.id
              ORDER BY t.id DESC"""
     return db.query(sql)
 
-def add_thread(title, comment, user_id):
-    sql = "INSERT INTO threads (title, comment, user_id) VALUES (?, ?, ?)"
-    db.execute(sql, [title, comment, user_id])
+def add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collectiondate):
+    sql = "INSERT INTO threads (title, comment, user_id, classes_id, rock, latitude, longitude, collectiondate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    db.execute(sql, [title, comment, user_id, rock_type, rock, latitude, longitude, collectiondate])
     thread_id = db.last_insert_id()
     return thread_id
     
@@ -21,7 +23,10 @@ def add_message(content, user_id, thread_id):
     db.execute(sql, [content, user_id, thread_id])
 
 def get_thread(thread_id):
-    sql = "SELECT id, title, comment, user_id FROM threads WHERE id = ?"
+    sql = """SELECT t.id, t.title, t.comment, t.user_id, t.rock, c.rocktype rocktype, t.latitude, t.longitude, t.collectiondate 
+             FROM threads t LEFT JOIN classes c
+                            ON t.classes_id = c.id
+             WHERE t.id = ?"""
     result = db.query(sql, [thread_id])
     return result[0] if result else None
 
@@ -51,18 +56,40 @@ def remove_thread(thread_id):
     sql = "DELETE FROM threads WHERE id = ?"
     db.execute(sql, [thread_id])
 
-def update_thread(thread_id, title, comment):
+def update_thread(thread_id, title, comment, rock, rock_type, latitude, longitude, collectiondate):
     sql = "UPDATE threads SET title = ? WHERE id = ?"
     db.execute(sql, [title, thread_id])
     sql = "UPDATE threads SET comment = ? WHERE id = ?"
     db.execute(sql, [comment, thread_id])
+    sql = "UPDATE threads SET rock = ? WHERE id = ?"
+    db.execute(sql, [rock, thread_id])
+    sql = "UPDATE threads SET classes_id = ? WHERE id = ?"
+    db.execute(sql, [rock_type, thread_id])
+    sql = "UPDATE threads SET rock = ? WHERE id = ?"
+    db.execute(sql, [rock, thread_id])
+    sql = "UPDATE threads SET latitude = ? WHERE id = ?"
+    db.execute(sql, [latitude, thread_id])
+    sql = "UPDATE threads SET longitude = ? WHERE id = ?"
+    db.execute(sql, [longitude, thread_id])
+    sql = "UPDATE threads SET collectiondate = ? WHERE id = ?"
+    db.execute(sql, [collectiondate, thread_id])
 
 def search(query):
-    sql = """SELECT t.title title,
-                    u.username username,
-                    t.id thread_id
-             FROM threads t, users u
-             WHERE u.id = t.user_id AND
-                   t.title LIKE ?
+    sql = """SELECT t.title,
+                    t.id thread_id,
+                    c.rocktype
+             FROM threads t LEFT JOIN classes c
+                            ON t.classes_id = c.id
+             WHERE t.title LIKE ? OR
+                   t.rock LIKE ? OR
+                   c.rocktype LIKE ?
              ORDER BY t.title DESC"""
-    return db.query(sql, ["%" + query + "%"])
+    like = "%" + query + "%"
+    return db.query(sql, [like, like, like])
+
+def get_user(user_id):
+    sql = """SELECT username
+             FROM users
+             WHERE id = ?"""
+    result = db.query(sql, [user_id])
+    return result[0]

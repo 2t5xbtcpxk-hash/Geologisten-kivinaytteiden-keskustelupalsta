@@ -1,6 +1,11 @@
 <h2>{{ thread.title }}</h2>
+
 <b>
-  {{ thread.comment }}
+  Näytteen kivityyppi ja kivilaji ovat {{ thread.rocktype }}, {{ thread.rock }} <br />
+  <br />
+  Näytte on kerätty {{ thread.collectiondate }} sijainnista {{ thread.longitude }} N, {{ thread.latitude }} E <br />
+  <br />
+  {{ thread.comment | show_lines }} <br />
 </b>
 
 {% for message in messages %}
@@ -8,7 +13,7 @@
     {{ message.username }} ({{ message.sent_at }}):
   </p>
   <p>
-    {{ message.content }}
+    {{ message.content | show_lines }}
   </p>
   {% if message.user_id == session.user_id %}
     <p>

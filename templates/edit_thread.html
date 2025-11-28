@@ -1,13 +1,43 @@
 <form action="/edit_thread/{{ thread.id }}" method="post">
   <p>
-      Kivilaji: <br />
-      <textarea name="title" maxlength="100" required>{{ thread.title }}</textarea>
+    Näytetunnus: <br />
+    <textarea name="title" maxlength="100" required>{{ thread.title }}</textarea> <br />
+    Maksimipituus: 100 merkkiä
   </p>
-    Kuvaus:<br />
-    <textarea name="comment" rows="5" cols="40" maxlength="1000" required>{{ thread.comment }}</textarea>
+  <p>
+    Kivityyppi: valittuna {{ thread.rocktype }} <br />
+    <select name="rock_type" required>
+      <option value="1">Magmakivi</option>
+      <option value="2">Metamorfinen kivi</option>
+      <option value="3">Sedimenttikivi</option>
+    </select>     
+  </p>
+  <p>
+    Pituuspiiri koordinaatti (EU-REF-FIN35): <br />
+    <textarea name="longitude" maxlength="100" required>{{ thread.longitude }}</textarea> <br />
+    Maksimipituus: 100 merkkiä
+  </p>
+  <p>
+    Leveyspiiri koordinaatti (EU-REF-FIN35): <br />
+    <textarea name="latitude" maxlength="100" required>{{ thread.latitude }}</textarea> <br />
+    Maksimipituus: 100 merkkiä
+  </p>
+  <p>
+    Näytteen keräyspäivämäärä: <br />
+    <input type="date" name="collectiondate" value = "{{thread.collectiondate}}"required />
+  </p>
+  <p>
+    Kivilaji: <br />
+    <textarea name="rock" maxlength="100" required>{{ thread.rock }}</textarea> <br />
+    Maksimipituus: 100 merkkiä
+  </p>
+  <p>
+    Kuvaus: <br />
+    <textarea name="comment" rows="5" cols="40" maxlength="1000" required>{{ thread.comment }}</textarea> <br />
+    Maksimipituus: 1000 merkkiä
   </p>
   <input type="hidden" name="csrf_token" value='{{ session.csrf_token }}' />
-  <input type="submit" value="Lähetä" />
+  <input type="submit" value="Päivitä tiedot" />
 </form>
 
 <p>

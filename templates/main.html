@@ -5,7 +5,7 @@
 <body>
   {% if session.user_id %}
     <p>
-      Olet kirjautunut nimellä {{ session.user_id }} |
+      Olet kirjautunut nimellä {{ user.username }} |
       <a href="/user/{{ session.user_id }}">Käyttäjäsivu</a>
     </p>
 
@@ -17,10 +17,16 @@
       <p>
         <a href="/thread/{{ thread.id }}">{{ thread.title }}</a>
         <br />
+        <p>Kivityyppi: {{ thread.rocktype }}</p>
+        <p>Kivilaji: {{ thread.rock }}</p>
         {% if thread.total == 0 %}
           <p>Ei vielä kommentteja</p>
         {% else %}
-          {{ thread.total }} kommenttia, uusin {{ thread.last }}
+          {% if thread.total == 1 %}
+            {{ thread.total }} kommentti
+          {% else %}
+            {{ thread.total }} kommenttia
+          {% endif %}
         {% endif %}
       </p>
       {% if thread.user_id == session.user_id %}
@@ -36,15 +42,44 @@
 
     <form action="/new_thread" method="post">
       <p>
+        Näytetunnus: <br />
+        <input type="text" name="title" maxlength="100" required/> <br />
+        Maksimipituus: 100 merkkiä
+      </p>
+      <p>
+        Kivityyppi: <br />
+        <select name="rock_type" required>
+            <option value="1">Magmakivi</option>
+            <option value="2">Metamorfinen kivi</option>
+            <option value="3">Sedimenttikivi</option>
+        </select>     
+    </p>
+      <p>
+        Pituuspiiri koordinaatti (EU-REF-FIN35): <br />
+        <textarea name="longitude" maxlength="100" required></textarea> <br />
+        Maksimipituus: 100 merkkiä
+      </p>
+      <p>
+        Leveyspiiri koordinaatti (EU-REF-FIN35): <br />
+        <textarea name="latitude" maxlength="100" required></textarea> <br />
+        Maksimipituus: 100 merkkiä
+      </p>
+      <p>
+        Näytteen keräyspäivämäärä: <br />
+        <input type="date" name="collectiondate" required />
+      </p>
+      <p>
         Kivilaji: <br />
-        <input type="text" name="title" maxlength="100" required/>
+        <textarea name="rock" maxlength="100" required></textarea> <br />
+        Maksimipituus: 100 merkkiä
       </p>
       <p>
         Kuvaus: <br />
-        <textarea name="comment" rows="5" cols="40" maxlength="1000" required></textarea>
+        <textarea name="comment" rows="5" cols="40" maxlength="1000" required></textarea> <br />
+        Maksimipituus: 1000 merkkiä
       </p>
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <input type="submit" value="Lähetä" />
+      <input type="submit" value="Lisää näyte" />
     </form>
     <p>
       <a href="/logout">Kirjaudu ulos</a>
@@ -64,10 +99,16 @@
       <p>
         <a href="/thread/{{ thread.id }}">{{ thread.title }}</a>
         <br />
+        <p>Kivityyppi: {{ thread.rocktype }}</p>
+        <p>Kivilaji: {{ thread.rock }}</p>
         {% if thread.total == 0 %}
           <p>Ei vielä kommentteja</p>
         {% else %}
-          {{ thread.total }} kommenttia, uusin {{ thread.last }}
+          {% if thread.total == 1 %}
+            {{ thread.total }} kommentti
+          {% else %}
+            {{ thread.total }} kommenttia
+          {% endif %}
         {% endif %}
       </p>
       <hr />

@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
 
+  {% for prompt in get_flashed_messages() %}
+    <p>
+      <b>{{ prompt }}</b>
+    </p>
+  {% endfor %}
 
 <body>
   <h1>Kirjaudu sisään</h1>
