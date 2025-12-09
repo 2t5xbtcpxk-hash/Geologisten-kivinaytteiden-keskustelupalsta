@@ -1,5 +1,6 @@
 <html>
-
+{% block content %}
+<link rel="stylesheet" href="/static/main.css">
 
 <body>
   <h1>Luo käyttäjätunnus</h1>
@@ -21,7 +22,7 @@
   </form>
 
   {% for prompt in get_flashed_messages() %}
-    <p>
+    <p class="info">
       <b>{{ prompt }}</b>
     </p>
   {% endfor %}
@@ -31,3 +32,4 @@
     <a href="/">Etusivulle</a>
   </p>
 </body>
+{% endblock %}

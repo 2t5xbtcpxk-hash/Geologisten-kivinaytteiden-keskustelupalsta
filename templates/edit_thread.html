@@ -1,4 +1,10 @@
-<form action="/edit_thread/{{ thread.id }}" method="post">
+{% extends "top_of_all_pages.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/main.css">
+
+<form action="/edit_thread/{{ thread.id }}" method="post" enctype="multipart/form-data">
   <p>
     Näytetunnus: <br />
     <textarea name="title" maxlength="100" required>{{ thread.title }}</textarea> <br />
@@ -24,7 +30,7 @@
   </p>
   <p>
     Näytteen keräyspäivämäärä: <br />
-    <input type="date" name="collectiondate" value = "{{thread.collectiondate}}"required />
+    <input type="date" name="collection_date" value = "{{thread.collection_date}}"required />
   </p>
   <p>
     Kivilaji: <br />
@@ -36,6 +42,9 @@
     <textarea name="comment" rows="5" cols="40" maxlength="1000" required>{{ thread.comment }}</textarea> <br />
     Maksimipituus: 1000 merkkiä
   </p>
+  <p>
+    Kuva: <input type="file" name="image" accept=".jpg" />
+  </p>
   <input type="hidden" name="csrf_token" value='{{ session.csrf_token }}' />
   <input type="submit" value="Päivitä tiedot" />
 </form>
@@ -43,3 +52,5 @@
 <p>
   <a href="/">Takaisin Etusivulle</a>
 </p>
+
+{% endblock %}

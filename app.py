@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import redirect, render_template, request, session, abort, flash
+from flask import redirect, render_template, request, session, abort, flash, make_response
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 import secrets
@@ -22,7 +22,6 @@ def index():
     else:    
         user_id = session["user_id"]
         return render_template("main.html", threads = forum.get_threads(), user = forum.get_user(user_id))
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -92,7 +91,15 @@ def new_thread():
     rock = request.form["rock"]
     latitude = request.form["latitude"]
     longitude = request.form["longitude"]
-    collectiondate = request.form["collectiondate"]
+    collection_date = request.form["collection_date"]
+    image_file = request.files["image"]
+    
+    if not image_file.filename.endswith(".jpg"):
+        return "VIRHE: väärä tiedostomuoto"
+
+    image = image_file.read()
+    if len(image) > 2560 * 1920:
+        return "VIRHE: liian suuri kuva"
 
     if not comment or len(comment) > 1000:
         abort(403)
@@ -112,7 +119,7 @@ def new_thread():
     if not rock_type:
         abort(403)
 
-    thread_id = forum.add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collectiondate)
+    thread_id = forum.add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collection_date, image)
     return redirect("/thread/" + str(thread_id))
 
 @app.route("/thread/<int:thread_id>")
@@ -123,7 +130,18 @@ def show_thread(thread_id):
         abort(404)
 
     messages = forum.get_messages(thread_id)
+    
     return render_template("thread.html", thread=thread, messages=messages)
+
+@app.route("/image/<int:thread_id>")
+def show_image(thread_id):
+    image = forum.get_image(thread_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
 
 @app.route("/new_message", methods=["POST"])
 def new_message():
@@ -234,7 +252,8 @@ def edit_thread(thread_id):
         rock = request.form["rock"]
         latitude = request.form["latitude"]
         longitude = request.form["longitude"]
-        collectiondate = request.form["collectiondate"]
+        collection_date = request.form["collection_date"]
+        image_file = request.files["image"]
         check_csrf()
 
         if not comment or len(comment) > 1000:
@@ -255,7 +274,11 @@ def edit_thread(thread_id):
         if not rock_type:
             abort(403)
 
-        forum.update_thread(thread["id"], title, comment, rock, rock_type, latitude, longitude, collectiondate)
+        if not image_file:
+            forum.update_thread_no_image(thread["id"], title, comment, rock, rock_type, latitude, longitude, collection_date)
+        else:
+            forum.update_thread(thread["id"], title, comment, rock, rock_type, latitude, longitude, collection_date, image_file)
+            
         return redirect("/")
     
 @app.route("/search")

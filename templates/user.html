@@ -1,3 +1,9 @@
+{% extends "top_of_all_pages.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/main.css">
+
 <h1>Käyttäjä {{ user.username }}</h1>
 
 {% if threads %}
@@ -8,21 +14,22 @@
 <h2>Lisätyt näytteet</h2>
 
   {% for thread in threads %}
-
-    <p>
-      <a href="/thread/{{ thread.thread_id }}">{{ thread.title }}</a>
-    <br />
-    {% if thread.total == 0 %}
-      <p>Ei vielä kommentteja</p>
-    {% else %}
-      {{ thread.total }} kommenttia
-    {% endif %}
-    </p>
-    <p>
-      <a href="/edit_thread/{{ thread.thread_id }}">Muokkaa</a> |
-      <a href="/remove_thread/{{ thread.thread_id }}">Poista</a>
-    </p>
-    <hr />
+    <div class="thread">
+      <p>
+        <a style="color:rgb(226, 226, 226)" href="/thread/{{ thread.thread_id }}">{{ thread.title }}</a>
+      <br />
+      {% if thread.total == 0 %}
+        <p>Ei vielä kommentteja</p>
+      {% else %}
+        {{ thread.total }} kommenttia
+      {% endif %}
+      </p>
+      <p>
+        <a style="color:rgb(226, 226, 226)" href="/edit_thread/{{ thread.thread_id }}">Muokkaa</a> |
+        <a style="color:rgb(226, 226, 226)" href="/remove_thread/{{ thread.thread_id }}">Poista</a>
+      </p>
+      <hr />
+    </div>
 
   {% endfor %}
 
@@ -35,6 +42,5 @@
 
 {% endif %}
 
-<p>
-  <a href="/">Takaisin Etusivulle</a>
-</p>
+
+{% endblock %}

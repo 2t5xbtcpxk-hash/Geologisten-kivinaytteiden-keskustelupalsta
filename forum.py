@@ -11,10 +11,12 @@ def get_threads():
              ORDER BY t.id DESC"""
     return db.query(sql)
 
-def add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collectiondate):
-    sql = "INSERT INTO threads (title, comment, user_id, classes_id, rock, latitude, longitude, collectiondate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    db.execute(sql, [title, comment, user_id, rock_type, rock, latitude, longitude, collectiondate])
+def add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collection_date, sample_image):
+    sql = "INSERT INTO threads (title, comment, user_id, classes_id, rock, latitude, longitude, collection_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    db.execute(sql, [title, comment, user_id, rock_type, rock, latitude, longitude, collection_date])
     thread_id = db.last_insert_id()
+    sql2 = "INSERT INTO images (thread_id, sample_image) VALUES (?, ?)"
+    db.execute(sql2, [thread_id, sample_image])
     return thread_id
     
 def add_message(content, user_id, thread_id):
@@ -23,7 +25,7 @@ def add_message(content, user_id, thread_id):
     db.execute(sql, [content, user_id, thread_id])
 
 def get_thread(thread_id):
-    sql = """SELECT t.id, t.title, t.comment, t.user_id, t.rock, c.rocktype rocktype, t.latitude, t.longitude, t.collectiondate 
+    sql = """SELECT t.id, t.title, t.comment, t.user_id, t.rock, c.rocktype rocktype, t.latitude, t.longitude, t.collection_date 
              FROM threads t LEFT JOIN classes c
                             ON t.classes_id = c.id
              WHERE t.id = ?"""
@@ -56,7 +58,7 @@ def remove_thread(thread_id):
     sql = "DELETE FROM threads WHERE id = ?"
     db.execute(sql, [thread_id])
 
-def update_thread(thread_id, title, comment, rock, rock_type, latitude, longitude, collectiondate):
+def update_thread(thread_id, title, comment, rock, rock_type, latitude, longitude, collection_date, image_file):
     sql = "UPDATE threads SET title = ? WHERE id = ?"
     db.execute(sql, [title, thread_id])
     sql = "UPDATE threads SET comment = ? WHERE id = ?"
@@ -71,8 +73,28 @@ def update_thread(thread_id, title, comment, rock, rock_type, latitude, longitud
     db.execute(sql, [latitude, thread_id])
     sql = "UPDATE threads SET longitude = ? WHERE id = ?"
     db.execute(sql, [longitude, thread_id])
-    sql = "UPDATE threads SET collectiondate = ? WHERE id = ?"
-    db.execute(sql, [collectiondate, thread_id])
+    sql = "UPDATE threads SET collection_date = ? WHERE id = ?"
+    db.execute(sql, [collection_date, thread_id])
+    sql = "UPDATE images SET sample_image = ? WHERE thread_id = ?"
+    db.execute(sql, [image_file, thread_id])
+
+def update_thread_no_image(thread_id, title, comment, rock, rock_type, latitude, longitude, collection_date):
+    sql = "UPDATE threads SET title = ? WHERE id = ?"
+    db.execute(sql, [title, thread_id])
+    sql = "UPDATE threads SET comment = ? WHERE id = ?"
+    db.execute(sql, [comment, thread_id])
+    sql = "UPDATE threads SET rock = ? WHERE id = ?"
+    db.execute(sql, [rock, thread_id])
+    sql = "UPDATE threads SET classes_id = ? WHERE id = ?"
+    db.execute(sql, [rock_type, thread_id])
+    sql = "UPDATE threads SET rock = ? WHERE id = ?"
+    db.execute(sql, [rock, thread_id])
+    sql = "UPDATE threads SET latitude = ? WHERE id = ?"
+    db.execute(sql, [latitude, thread_id])
+    sql = "UPDATE threads SET longitude = ? WHERE id = ?"
+    db.execute(sql, [longitude, thread_id])
+    sql = "UPDATE threads SET collection_date = ? WHERE id = ?"
+    db.execute(sql, [collection_date, thread_id])
 
 def search(query):
     sql = """SELECT t.title,
@@ -93,3 +115,10 @@ def get_user(user_id):
              WHERE id = ?"""
     result = db.query(sql, [user_id])
     return result[0]
+
+def get_image(thread_id):
+    sql = """SELECT id, sample_image, thread_id
+             FROM images
+             WHERE thread_id = ?"""
+    result = db.query(sql, [thread_id])
+    return result[0][0]

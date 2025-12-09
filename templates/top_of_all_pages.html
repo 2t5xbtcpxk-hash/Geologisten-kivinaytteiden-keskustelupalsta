@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="/static/main.css">
+
+
+<div class="header">
+  <h1>Geologisten näytteiden kokoelmasivusto</h1>
+</div>
+
+<div class="nav">
+    <nav>
+      <ul>
+        <li><a style="color:rgb(226, 226, 226)" href="/">Etusivu</a></li>
+        <li><a style="color:rgb(226, 226, 226)" href="/search">Hake näytteitä</a></li>
+        {% if session.user_id %}
+        <li><a style="color:rgb(226, 226, 226)" href="/user/{{ session.user_id }}">Käyttäjäsivu</a></li>
+        <li><a style="color:rgb(226, 226, 226)" href="/logout">Kirjaudu ulos</a></li>
+        {% else %}
+        <li><a style="color:rgb(226, 226, 226)" href="/register">Luo tunnus</a></li>
+        <li><a style="color:rgb(226, 226, 226)" href="/login">Kirjaudu sisään</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+</div>
+
+<div class="content">
+  {% block content %}{% endblock %}
+</div>
+
+<html>

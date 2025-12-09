@@ -1,3 +1,9 @@
+{% extends "top_of_all_pages.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/main.css">
+
 <form action="/edit/{{ message.id }}" method="post">
   <p>
     Viesti:<br />
@@ -8,5 +14,7 @@
 </form>
 
 <p>
-  <a href="/thread/{{ message.thread_id }}">Takaisin keskusteluun</a>
+  <a style="color:rgb(226, 226, 226)" href="/thread/{{ message.thread_id }}">Takaisin keskusteluun</a>
 </p>
+
+{% endblock %}

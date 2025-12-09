@@ -1,44 +1,58 @@
-<h2>{{ thread.title }}</h2>
+{% extends "top_of_all_pages.html" %}
 
-<b>
-  Näytteen kivityyppi ja kivilaji ovat {{ thread.rocktype }}, {{ thread.rock }} <br />
-  <br />
-  Näytte on kerätty {{ thread.collectiondate }} sijainnista {{ thread.longitude }} N, {{ thread.latitude }} E <br />
-  <br />
-  {{ thread.comment | show_lines }} <br />
-</b>
+{% block content %}
+
+<link rel="stylesheet" href="/static/main.css">
+
+
+<div class="header">
+  <h1>{{ thread.title }}</h1> <br />
+</div>
+
+<div class="thread">
+  <b>
+    Näytteen kivityyppi ja kivilaji ovat {{ thread.rocktype }}, {{ thread.rock }} <br />
+    <br />
+    Näytte on kerätty {{ thread.collectiondate }} sijainnista {{ thread.longitude }} N, {{ thread.latitude }} E <br />
+    <br />
+    {{ thread.comment | show_lines }} <br />
+    <img src="/image/{{ thread_id }}" /> <br />
+  </b>
+</div>
 
 {% for message in messages %}
-  <p>
-    {{ message.username }} ({{ message.sent_at }}):
-  </p>
-  <p>
-    {{ message.content | show_lines }}
-  </p>
-  {% if message.user_id == session.user_id %}
+  <div class="message">
     <p>
-      <a href="/edit/{{ message.id }}">Muokkaa</a> |
-      <a href="/remove/{{ message.id }}">Poista</a>
+      {{ message.username }} ({{ message.sent_at }}):
     </p>
-  {% endif %}
-  <hr />
+    <p>
+      {{ message.content | show_lines }}
+    </p>
+    {% if message.user_id == session.user_id %}
+      <p>
+        <a style="color:rgb(226, 226, 226)" href="/edit/{{ message.id }}">Muokkaa</a> |
+        <a style="color:rgb(226, 226, 226)" href="/remove/{{ message.id }}">Poista</a>
+      </p>
+    {% endif %}
+    <hr />
+  </div>
 {% endfor %}
 
 {% if session.user_id %}
-  <h2>Uusi kommentti</h2>
+  <div class="message">
+    <h2>Uusi kommentti</h2>
 
-  <form action="/new_message" method="post">
-    <p>
-      Kommentti:<br />
-      <textarea name="content" rows="5" cols="40" maxlength="1000" required></textarea>
-    </p>
-    <input type="hidden" name="thread_id" value="{{ thread.id }}" />
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" value="Lähetä" />
-  </form>
-  <hr />
+    <form action="/new_message" method="post">
+      <p>
+        Kommentti:<br />
+        <textarea name="content" rows="5" cols="40" maxlength="1000" required></textarea>
+      </p>
+      <input type="hidden" name="thread_id" value="{{ thread.id }}" />
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="submit" value="Lähetä" />
+    </form>
+    <hr />
+  </div>
 {% endif %}
 
-<p>
-  <a href="/">Etusivulle</a>
-</p>
+{% endblock %}

@@ -9,11 +9,17 @@ CREATE TABLE IF NOT EXISTS threads (
     title TEXT,
     rock TEXT,
     comment TEXT,
-    classes_id TEXT,
+    classes_id TEXT REFERENCES classes,
     latitude TEXT,
     longitude TEXT,
-    collectiondate TEXT,
+    collection_date TEXT,
     user_id INTEGER REFERENCES users
+);
+
+CREATE TABLE IF NOT EXISTS images (
+    id INTEGER PRIMARY KEY,
+    sample_image BLOB,
+    thread_id INTEGER REFERENCES threads ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS messages (
