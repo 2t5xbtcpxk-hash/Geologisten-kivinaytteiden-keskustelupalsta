@@ -7,6 +7,7 @@ import config
 import sqlite3
 import db, users, forum
 import markupsafe
+import math
 
 # Connect to database
 con = sqlite3.connect("database.db")
@@ -15,13 +16,28 @@ app = Flask(__name__)
 app.secret_key = config.secret_key
 
 @app.route("/")
-def index():
+@app.route("/<int:page>")
+def index(page=1):
     #check_csrf()
+
+    thread_count = forum.thread_count()
+    page_size = 10
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect("/" + str(page_count))
+    
     if "user_id" not in session:
-        return render_template("main.html", threads = forum.get_threads())
+        return render_template("main.html", threads = forum.get_threads(page, page_size),
+                               page=page, page_count=page_count)
     else:    
         user_id = session["user_id"]
-        return render_template("main.html", threads = forum.get_threads(), user = forum.get_user(user_id))
+        return render_template("main.html", threads = forum.get_threads(page, page_size), 
+                               user = forum.get_user(user_id),
+                               page=page, page_count=page_count)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

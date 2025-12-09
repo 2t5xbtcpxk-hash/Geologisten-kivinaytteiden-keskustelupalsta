@@ -36,7 +36,14 @@
         {% endif %}
         <hr />
       </div>
+    
     {% endfor %}
+
+    <p class="page-nav">
+      <a style="color:rgb(226, 226, 226)" href="/{{ page - 1 }}">&lt;&lt;</a>
+      Sivu {{ page }}/{{ page_count }}
+      <a style="color:rgb(226, 226, 226)" href="/{{ page + 1 }}">&gt;&gt;</a>
+    </p>
 
     <div class="thread">
       <h2>Uusi lisäys</h2>
@@ -89,10 +96,11 @@
 
   {% else %}
     
-    <div class="thread">
-      <h2>Lisättyjä näytteitä</h2>
 
-      {% for thread in threads %}
+    <h2>Lisättyjä näytteitä</h2>
+
+    {% for thread in threads %}
+      <div class="thread">
         <p>
           <a style="color:rgb(226, 226, 226)" href="/thread/{{ thread.id }}">{{ thread.title }}</a>
           <br />
@@ -109,8 +117,18 @@
           {% endif %}
         </p>
         <hr />
-      {% endfor %}
-    </div>
+      </div>
+    {% endfor %}
+
+    <p class="page-nav">
+      <a style="color:rgb(226, 226, 226)" href="/{{ page - 1 }}">&lt;&lt;</a>
+      Sivu {{ page }}/{{ page_count }}
+      <a style="color:rgb(226, 226, 226)" href="/{{ page + 1 }}">&gt;&gt;</a>
+    </p>
+
+    <p>
+      Kirjaudu sisään tai luo tunnus lisätäksesi näytteitä.
+    </p>
   {% endif %}
 </body>
 

@@ -1,18 +1,24 @@
 import db
 
 
-def get_threads():
-    sql = """SELECT t.id id, t.user_id user_id, t.title, c.rocktype rocktype, t.rock rock, IFNULL(COUNT(m.id), 0) total, IFNULL(MAX(m.sent_at), "-") last
+def get_threads(page, page_size):
+    sql = """SELECT t.id id, t.user_id user_id, t.title, c.rocktype rocktype, t.rock rock, 
+             IFNULL(COUNT(m.id), 0) total, IFNULL(MAX(m.sent_at), "-") last
              FROM threads t LEFT JOIN messages m
                             ON t.id = m.thread_id
                             LEFT JOIN classes as c 
                             ON t.classes_id = c.id
              GROUP BY t.id
-             ORDER BY t.id DESC"""
-    return db.query(sql)
+             ORDER BY t.id DESC
+             LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
 
-def add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collection_date, sample_image):
-    sql = "INSERT INTO threads (title, comment, user_id, classes_id, rock, latitude, longitude, collection_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+def add_thread(title, comment, user_id, rock_type, rock,
+               latitude, longitude, collection_date, sample_image):
+    sql = """INSERT INTO threads (title, comment, user_id, classes_id, rock, latitude, longitude, collection_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
     db.execute(sql, [title, comment, user_id, rock_type, rock, latitude, longitude, collection_date])
     thread_id = db.last_insert_id()
     sql2 = "INSERT INTO images (thread_id, sample_image) VALUES (?, ?)"
@@ -25,7 +31,8 @@ def add_message(content, user_id, thread_id):
     db.execute(sql, [content, user_id, thread_id])
 
 def get_thread(thread_id):
-    sql = """SELECT t.id, t.title, t.comment, t.user_id, t.rock, c.rocktype rocktype, t.latitude, t.longitude, t.collection_date 
+    sql = """SELECT t.id, t.title, t.comment, t.user_id, t.rock, c.rocktype rocktype,
+             t.latitude, t.longitude, t.collection_date 
              FROM threads t LEFT JOIN classes c
                             ON t.classes_id = c.id
              WHERE t.id = ?"""
@@ -122,3 +129,7 @@ def get_image(thread_id):
              WHERE thread_id = ?"""
     result = db.query(sql, [thread_id])
     return result[0][0]
+
+def thread_count():
+    sql = "SELECT COUNT(*) FROM threads"
+    return db.query(sql)[0][0]
