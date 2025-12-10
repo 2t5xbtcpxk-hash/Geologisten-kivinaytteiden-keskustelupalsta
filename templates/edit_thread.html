@@ -8,7 +8,7 @@
   <p>
     Näytetunnus: <br />
     <textarea name="title" maxlength="100" required>{{ thread.title }}</textarea> <br />
-    Maksimipituus: 100 merkkiä
+    Max. 100 merkkiä
   </p>
   <p>
     Kivityyppi: valittuna {{ thread.rocktype }} <br />
@@ -19,38 +19,35 @@
     </select>     
   </p>
   <p>
-    Pituuspiiri koordinaatti (EU-REF-FIN35): <br />
-    <textarea name="longitude" maxlength="100" required>{{ thread.longitude }}</textarea> <br />
-    Maksimipituus: 100 merkkiä
+    Pituuspiiri koordinaatti (YKJ): <br />
+    <input type="number" step=".02" name="longitude" maxlength="10" required value="{{ thread.longitude }}"></input> <br />
+    Max. 10 merkkiä
   </p>
   <p>
-    Leveyspiiri koordinaatti (EU-REF-FIN35): <br />
-    <textarea name="latitude" maxlength="100" required>{{ thread.latitude }}</textarea> <br />
-    Maksimipituus: 100 merkkiä
+    Leveyspiiri koordinaatti (YKJ): <br />
+    <input type="number" step=".02" name="latitude" maxlength="10" value="{{ thread.latitude }}" required></input> <br />
+    Max. 10 merkkiä
   </p>
   <p>
     Näytteen keräyspäivämäärä: <br />
-    <input type="date" name="collection_date" value = "{{thread.collection_date}}"required />
+    <input type="date" name="collection_date" value = "{{thread.collection_date}}" max = "{{ current_date }}" required />
   </p>
   <p>
     Kivilaji: <br />
-    <textarea name="rock" maxlength="100" required>{{ thread.rock }}</textarea> <br />
-    Maksimipituus: 100 merkkiä
+    <textarea name="rock" maxlength="50" required>{{ thread.rock }}</textarea> <br />
+    Max 50 merkkiä
   </p>
   <p>
     Kuvaus: <br />
     <textarea name="comment" rows="5" cols="40" maxlength="1000" required>{{ thread.comment }}</textarea> <br />
-    Maksimipituus: 1000 merkkiä
+    Max. 1000 merkkiä
   </p>
   <p>
-    Kuva: <input type="file" name="image" accept=".jpg" />
+    Kuva: <input type="file" name="image" accept=".jpg" required/>
   </p>
   <input type="hidden" name="csrf_token" value='{{ session.csrf_token }}' />
   <input type="submit" value="Päivitä tiedot" />
 </form>
 
-<p>
-  <a href="/">Takaisin Etusivulle</a>
-</p>
 
 {% endblock %}

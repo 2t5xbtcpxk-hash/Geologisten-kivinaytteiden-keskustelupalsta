@@ -8,6 +8,7 @@ import sqlite3
 import db, users, forum
 import markupsafe
 import math
+from datetime import date, datetime
 
 # Connect to database
 con = sqlite3.connect("database.db")
@@ -24,6 +25,7 @@ def index(page=1):
     page_size = 10
     page_count = math.ceil(thread_count / page_size)
     page_count = max(page_count, 1)
+    current_date = current_date=date.today().isoformat()
 
     if page < 1:
         return redirect("/1")
@@ -37,7 +39,7 @@ def index(page=1):
         user_id = session["user_id"]
         return render_template("main.html", threads = forum.get_threads(page, page_size), 
                                user = forum.get_user(user_id),
-                               page=page, page_count=page_count)
+                               page=page, page_count=page_count, current_date=current_date)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -89,6 +91,12 @@ def create():
         flash("VIRHE: Käyttäjänimi on jo varattu.")
         session["filled"] = {"username": username}
         return redirect("/register")
+    
+    if len(password1) < 5 or len(password1) > 15 or len(password2) < 5 or len(password2) > 15:
+        flash("VIRHE: Salasana on väärän mittainen")
+
+    if len(username) > 16 or len(username) < 3:
+        flash("VIRHE: Käyttäjänimi on liian pitkä tai liian lyhyt")
 
     session.pop("filled", default=None)
     flash("Tunnuksen luominen onnistui, kirjaudu nyt sisään.")
@@ -123,13 +131,13 @@ def new_thread():
     if not title or len(title) > 100:
         abort(403)
 
-    if not rock or len(rock) > 100:
+    if not rock or len(rock) > 50:
         abort(403)
 
-    if not latitude or len(latitude) > 50:
+    if not latitude or len(latitude) > 10:
         abort(403)
 
-    if not longitude or len(longitude) > 50:
+    if not longitude or len(longitude) > 10:
         abort(403)
 
     if not rock_type:

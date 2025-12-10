@@ -1,4 +1,7 @@
 <html>
+
+{% extends "top_of_all_pages.html" %}
+
 {% block content %}
 <link rel="stylesheet" href="/static/main.css">
 
@@ -8,15 +11,18 @@
   <form action="/create" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" value="{{ filled.username }}" maxlength="16" />
-    </p>
+      <input type="text" name="username" value="{{ filled.username }}" minlength="3" maxlength="16" />  <br />
+      Min. 3 merkkiä, Max. 16 merkkiä
+    </p>  
     <p>
       Salasana: <br />
-      <input type="password" name="password1" />
+      <input type="password" name="password1" minlength="5" maxlength="20"/>  <br />
+      Min. 5 merkkiä, Max 20 merkkiä
     </p>
     <p>
       Salasana uudestaan: <br />
-      <input type="password" name="password2" />
+      <input type="password" name="password2" minlength="5" maxlength="20"/>  <br />
+      Min. 5 merkkiä, Max 20 merkkiä
     </p>
     <input type="submit" value="Luo tunnus" />
   </form>
@@ -28,8 +34,5 @@
   {% endfor %}
 
   <hr />
-  <p>
-    <a href="/">Etusivulle</a>
-  </p>
 </body>
 {% endblock %}

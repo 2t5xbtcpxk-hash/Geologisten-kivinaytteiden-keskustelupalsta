@@ -34,7 +34,6 @@
         <a style="color:rgb(226, 226, 226)" href="/remove/{{ message.id }}">Poista</a>
       </p>
     {% endif %}
-    <hr />
   </div>
 {% endfor %}
 
@@ -45,13 +44,13 @@
     <form action="/new_message" method="post">
       <p>
         Kommentti:<br />
-        <textarea name="content" rows="5" cols="40" maxlength="1000" required></textarea>
+        <textarea name="content" rows="5" cols="40" maxlength="1000" required></textarea>  <br />
+        Max. 1000 merkkiä
       </p>
       <input type="hidden" name="thread_id" value="{{ thread.id }}" />
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       <input type="submit" value="Lähetä" />
     </form>
-    <hr />
   </div>
 {% endif %}
 

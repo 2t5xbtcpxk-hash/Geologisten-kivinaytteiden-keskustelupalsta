@@ -34,15 +34,14 @@
           <a style="color:rgb(226, 226, 226)" href="/remove_thread/{{ thread.id }}">Poista</a>
         </p>
         {% endif %}
-        <hr />
       </div>
     
     {% endfor %}
 
     <p class="page-nav">
-      <a style="color:rgb(226, 226, 226)" href="/{{ page - 1 }}">&lt;&lt;</a>
+      <a style="color:rgb(226, 226, 226)" href="/{{ page - 1 }}">&lt;</a>
       Sivu {{ page }}/{{ page_count }}
-      <a style="color:rgb(226, 226, 226)" href="/{{ page + 1 }}">&gt;&gt;</a>
+      <a style="color:rgb(226, 226, 226)" href="/{{ page + 1 }}">&gt;</a>
     </p>
 
     <div class="thread">
@@ -52,7 +51,7 @@
         <p>
           Näytetunnus: <br />
           <input type="text" name="title" maxlength="100" required/> <br />
-          Maksimipituus: 100 merkkiä
+          Max. 100 merkkiä
         </p>
         <p>
           Kivityyppi: <br />
@@ -61,33 +60,33 @@
               <option value="2">Metamorfinen kivi</option>
               <option value="3">Sedimenttikivi</option>
           </select>     
-      </p>
-        <p>
-          Pituuspiiri koordinaatti (EU-REF-FIN35): <br />
-          <textarea name="longitude" maxlength="100" required></textarea> <br />
-          Maksimipituus: 100 merkkiä
         </p>
         <p>
-          Leveyspiiri koordinaatti (EU-REF-FIN35): <br />
-          <textarea name="latitude" maxlength="100" required></textarea> <br />
-          Maksimipituus: 100 merkkiä
+          Pituuspiiri koordinaatti (YKJ): <br />
+          <input type="number" step=".02" name="longitude" maxlength="10" required></input> <br />
+          Max. 10 merkkiä
+        </p>
+        <p>
+          Leveyspiiri koordinaatti (YKJ): <br />
+          <input type="number" step=".02" name="latitude" maxlength="10" required></input> <br />
+          Max. 10 merkkiä
         </p>
         <p>
           Näytteen keräyspäivämäärä: <br />
-          <input type="date" name="collection_date" required />
+          <input type="date" name="collection_date" max="{{ current_date }}" required />
         </p>
         <p>
           Kivilaji: <br />
-          <textarea name="rock" maxlength="100" required></textarea> <br />
-          Maksimipituus: 100 merkkiä
+          <textarea name="rock" maxlength="50" required></textarea> <br />
+          Max. 50 merkkiä
         </p>
         <p>
           Kuvaus: <br />
           <textarea name="comment" rows="5" cols="40" maxlength="1000" required></textarea> <br />
-          Maksimipituus: 1000 merkkiä
+          Max. 1000 merkkiä
         </p>
         <p>
-          Kuva: <input type="file" name="image" accept=".jpg" />
+          Kuva: <input type="file" name="image" accept=".jpg" required/>
         </p>
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <input type="submit" value="Lisää näyte" />
@@ -116,14 +115,14 @@
             {% endif %}
           {% endif %}
         </p>
-        <hr />
+
       </div>
     {% endfor %}
 
     <p class="page-nav">
-      <a style="color:rgb(226, 226, 226)" href="/{{ page - 1 }}">&lt;&lt;</a>
+      <a style="color:rgb(226, 226, 226)" href="/{{ page - 1 }}">&lt;</a>
       Sivu {{ page }}/{{ page_count }}
-      <a style="color:rgb(226, 226, 226)" href="/{{ page + 1 }}">&gt;&gt;</a>
+      <a style="color:rgb(226, 226, 226)" href="/{{ page + 1 }}">&gt;</a>
     </p>
 
     <p>
