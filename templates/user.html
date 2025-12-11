@@ -8,7 +8,7 @@
 
 {% if threads %}
   <p>
-    Olet lisännyt {{ threads | count }} näytettä
+    Olet lisännyt {{ thread_count }} näytettä
   </p>
 
 <h2>Lisätyt näytteet</h2>
@@ -21,7 +21,11 @@
       {% if thread.total == 0 %}
         <p>Ei vielä kommentteja</p>
       {% else %}
-        {{ thread.total }} kommenttia
+        {% if thread.total == 1 %}
+          {{ thread.total }} kommentti
+        {% else %}
+         {{ thread.total }} kommenttia
+        {% endif %}
       {% endif %}
       </p>
       <p>
@@ -32,6 +36,12 @@
     </div>
 
   {% endfor %}
+
+  <p class="page-nav">
+    <a style="color:rgb(226, 226, 226)" href="/user/{{ user.user_id }}/{{ page - 1 }}">&lt;</a>
+    Sivu {{ page }}/{{ page_count }}
+    <a style="color:rgb(226, 226, 226)" href="/user/{{ user.user_id }}/{{ page + 1 }}">&gt;</a>
+  </p>
 
 
 {% else %}

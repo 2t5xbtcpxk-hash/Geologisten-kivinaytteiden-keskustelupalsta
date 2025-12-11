@@ -22,7 +22,7 @@ def get_user(user_id):
     result = db.query(sql, [user_id])
     return result[0] if result else None
 
-def get_threads(user_id):
+def get_threads(user_id, page, page_size):
     sql = """SELECT t.id AS thread_id,
                     t.title,
                     t.comment,
@@ -31,7 +31,15 @@ def get_threads(user_id):
              FROM threads t LEFT JOIN messages m
              ON t.id = m.thread_id
              WHERE t.user_id = ?
-             GROUP BY t.id;"""
-    
-    result = db.query(sql, [user_id])
+             GROUP BY t.id
+             LIMIT ? OFFSET ?;"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    result = db.query(sql, [user_id, limit, offset])
     return result if result else None
+
+def user_thread_count(user_id):
+    sql = """SELECT COUNT(*) 
+             FROM threads 
+             WHERE user_id = ?"""
+    return db.query(sql, [user_id])[0][0]

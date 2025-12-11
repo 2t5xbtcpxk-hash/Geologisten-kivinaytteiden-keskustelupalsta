@@ -4,6 +4,11 @@
 
 <link rel="stylesheet" href="/static/main.css">
 
+{% for prompt in get_flashed_messages() %}
+  <p class="info">
+    <b>{{ prompt }}</b>
+  </p>
+{% endfor %}
 
 <div class="header">
   <h1>{{ thread.title }}</h1> <br />
@@ -16,7 +21,27 @@
     Näytte on kerätty {{ thread.collectiondate }} sijainnista {{ thread.longitude }} N, {{ thread.latitude }} E <br />
     <br />
     {{ thread.comment | show_lines }} <br />
-    <img src="/image/{{ thread_id }}" /> <br />
+    <div class="img">
+      {% for image in images %}
+        <br />
+        <img src="/image/{{ image.id }}" alt="Kuva kirjatusta näytteestä." /> <br />
+        {% if thread.user_id == session.user_id %}
+          <p>
+            <a style="color:rgb(226, 226, 226)" href="/remove_image/{{ image.id }}">Poista</a>
+          </p>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% if thread.user_id == session.user_id %}
+      <form action="/add_image" method="post" enctype="multipart/form-data">
+        <p>
+          <label for="image"> Kuva:</label><input type="file" name="image" accept=".jpg"/>
+        </p>
+        <input type="hidden" name="thread_id" value="{{ thread.id }}" />
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" value="Lisää kuva" />
+      </form>
+    {% endif %}
   </b>
 </div>
 
@@ -43,7 +68,7 @@
 
     <form action="/new_message" method="post">
       <p>
-        Kommentti:<br />
+        <label for="content"> Kommentti:</label> <br />
         <textarea name="content" rows="5" cols="40" maxlength="1000" required></textarea>  <br />
         Max. 1000 merkkiä
       </p>
@@ -55,3 +80,4 @@
 {% endif %}
 
 {% endblock %}
+

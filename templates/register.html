@@ -10,17 +10,17 @@
 
   <form action="/create" method="post">
     <p>
-      Tunnus: <br />
+      <label for="username"> Tunnus:</label> <br />
       <input type="text" name="username" value="{{ filled.username }}" minlength="3" maxlength="16" />  <br />
       Min. 3 merkkiä, Max. 16 merkkiä
     </p>  
     <p>
-      Salasana: <br />
+      <label for="password1"> Salasana:</label> <br />
       <input type="password" name="password1" minlength="5" maxlength="20"/>  <br />
       Min. 5 merkkiä, Max 20 merkkiä
     </p>
     <p>
-      Salasana uudestaan: <br />
+      <label for="password2"> Salasana uudestaan:</label> <br />
       <input type="password" name="password2" minlength="5" maxlength="20"/>  <br />
       Min. 5 merkkiä, Max 20 merkkiä
     </p>

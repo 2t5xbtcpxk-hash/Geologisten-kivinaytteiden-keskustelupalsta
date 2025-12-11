@@ -4,14 +4,14 @@
 
 <link rel="stylesheet" href="/static/main.css">
 
-<form action="/edit_thread/{{ thread.id }}" method="post" enctype="multipart/form-data">
+<form action="/edit_thread/{{ thread.id }}" method="post">
   <p>
-    Näytetunnus: <br />
+    <label for="title">Näytetunnus:</label> <br />
     <textarea name="title" maxlength="100" required>{{ thread.title }}</textarea> <br />
     Max. 100 merkkiä
   </p>
   <p>
-    Kivityyppi: valittuna {{ thread.rocktype }} <br />
+    <label for="rock_type"> Kivityyppi:  valittuna {{ thread.rocktype }}</label> <br />
     <select name="rock_type" required>
       <option value="1">Magmakivi</option>
       <option value="2">Metamorfinen kivi</option>
@@ -19,31 +19,28 @@
     </select>     
   </p>
   <p>
-    Pituuspiiri koordinaatti (YKJ): <br />
-    <input type="number" step=".02" name="longitude" maxlength="10" required value="{{ thread.longitude }}"></input> <br />
+    <label for="longitude"> Pituuspiiri koordinaatti (YKJ):</label> <br />
+    <input type="number" step=".02" name="longitude" maxlength="10" min="0" required value="{{ thread.longitude }}"></input> <br />
     Max. 10 merkkiä
   </p>
   <p>
-    Leveyspiiri koordinaatti (YKJ): <br />
-    <input type="number" step=".02" name="latitude" maxlength="10" value="{{ thread.latitude }}" required></input> <br />
+    <label for="latitude"> Leveyspiiri koordinaatti (YKJ):</label> <br />
+    <input type="number" step=".02" name="latitude" maxlength="10" min="0" value="{{ thread.latitude }}" required></input> <br />
     Max. 10 merkkiä
   </p>
   <p>
-    Näytteen keräyspäivämäärä: <br />
+    <label for="date"> Näytteen keräyspäivämäärä:</label> <br />
     <input type="date" name="collection_date" value = "{{thread.collection_date}}" max = "{{ current_date }}" required />
   </p>
   <p>
-    Kivilaji: <br />
+    <label for="rock"> Kivilaji:</label> <br />
     <textarea name="rock" maxlength="50" required>{{ thread.rock }}</textarea> <br />
     Max 50 merkkiä
   </p>
   <p>
-    Kuvaus: <br />
+    <label for="comment"> Kuvaus:</label> <br />
     <textarea name="comment" rows="5" cols="40" maxlength="1000" required>{{ thread.comment }}</textarea> <br />
     Max. 1000 merkkiä
-  </p>
-  <p>
-    Kuva: <input type="file" name="image" accept=".jpg" required/>
   </p>
   <input type="hidden" name="csrf_token" value='{{ session.csrf_token }}' />
   <input type="submit" value="Päivitä tiedot" />

@@ -76,3 +76,9 @@ nav li:not(:last-of-type) {
   background-color: rgba(176, 65, 65, 0.387);
   color: white;
 }
+
+img {
+  border-radius: 8px;
+  max-height: 150px;
+  max-width: 200px;
+}

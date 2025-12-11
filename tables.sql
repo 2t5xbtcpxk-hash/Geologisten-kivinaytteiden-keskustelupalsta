@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS threads (
 CREATE TABLE IF NOT EXISTS images (
     id INTEGER PRIMARY KEY,
     sample_image BLOB,
+    user_id INTEGER REFERENCES users,
     thread_id INTEGER REFERENCES threads ON DELETE CASCADE
 );
 

@@ -116,14 +116,6 @@ def new_thread():
     latitude = request.form["latitude"]
     longitude = request.form["longitude"]
     collection_date = request.form["collection_date"]
-    image_file = request.files["image"]
-    
-    if not image_file.filename.endswith(".jpg"):
-        return "VIRHE: väärä tiedostomuoto"
-
-    image = image_file.read()
-    if len(image) > 2560 * 1920:
-        return "VIRHE: liian suuri kuva"
 
     if not comment or len(comment) > 1000:
         abort(403)
@@ -143,7 +135,7 @@ def new_thread():
     if not rock_type:
         abort(403)
 
-    thread_id = forum.add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collection_date, image)
+    thread_id = forum.add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collection_date)
     return redirect("/thread/" + str(thread_id))
 
 @app.route("/thread/<int:thread_id>")
@@ -153,19 +145,45 @@ def show_thread(thread_id):
     if not thread:
         abort(404)
 
+    images = forum.get_images(thread_id)
+
     messages = forum.get_messages(thread_id)
     
-    return render_template("thread.html", thread=thread, messages=messages)
+    return render_template("thread.html", thread=thread, messages=messages,
+                           images=images)
 
-@app.route("/image/<int:thread_id>")
-def show_image(thread_id):
-    image = forum.get_image(thread_id)
+@app.route("/image/<int:image_id>")
+def show_image(image_id):
+    image = forum.get_image(image_id)
     if not image:
         abort(404)
 
     response = make_response(bytes(image))
     response.headers.set("Content-Type", "image/jpeg")
     return response
+
+@app.route("/remove_image/<int:image_id>", methods=["GET", "POST"])
+def remove_image(image_id):
+
+    require_login()
+
+    image = forum.get_image(image_id)
+    image_2 = forum.get_image2(image_id)
+
+    if not image:
+        abort(404)
+
+
+    check_user(image_2["user_id"])
+
+    if request.method == "GET":
+        return render_template("remove_image.html", image=image_2)
+
+    if request.method == "POST":
+        check_csrf()
+        if "continue" in request.form:
+            forum.remove_image(image_2["id"])
+        return redirect("/thread/" + str(image_2["thread_id"]))
 
 @app.route("/new_message", methods=["POST"])
 def new_message():
@@ -312,11 +330,16 @@ def search():
     return render_template("search.html", query=query, results=results)
 
 @app.route("/user/<int:user_id>")
-def show_user(user_id):
+@app.route("/user/<int:user_id>/<int:page>")
+def show_user(user_id, page=1):
 
     require_login()
 
     user = users.get_user(user_id)
+    thread_count = users.user_thread_count(user_id)
+    page_size = 10
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
 
     if not user:
         abort(404)
@@ -324,9 +347,46 @@ def show_user(user_id):
     if user["user_id"] != session["user_id"]:
         abort(403)
 
-    threads = users.get_threads(user_id)
-    return render_template("user.html", user=user, threads=threads)
+    if page < 1:
+        return redirect("/user/" + str(user_id) + "/1")
+    if page > page_count:
+        return redirect("/user/" + str(user_id) + "/" + str(page_count))
+
+    threads = users.get_threads(user_id, page=page, page_size=page_size)
+    return render_template("user.html", user=user, threads=threads, 
+                           page=page, page_count=page_count, thread_count=thread_count)
     
+@app.route("/add_image", methods=["POST"])
+def add_image():
+
+    require_login()
+    check_csrf()
+
+    user_id = session["user_id"]
+    image_file = request.files["image"]
+    thread_id = request.form["thread_id"]
+    image_count = forum.thread_image_count(thread_id)
+    print(image_count)
+    
+    if image_count > 4:
+        flash("VIRHE: Maksimissaan 5 kuvaa per näyte")
+        return redirect("/thread/" + str(thread_id))
+    
+    if not image_file.filename.endswith(".jpg"):
+        flash("VIRHE: väärä tiedostomuoto")
+        return redirect("/thread/" + str(thread_id))
+    else:
+        image = image_file.read()
+        if len(image) > 2560 * 1920:
+            flash("VIRHE: liian suuri kuva")
+            return redirect("/thread/" + str(thread_id))
+        else:
+            try:
+                forum.add_image(thread_id, image, user_id)
+                return redirect("/thread/" + str(thread_id))
+            except:
+                abort(403)
+
 @app.template_filter()
 def show_lines(content):
     content = str(markupsafe.escape(content))
@@ -345,6 +405,5 @@ def check_csrf():
         abort(403)
 
 def check_user(user):
-
     if user != session["user_id"]:
         abort(403)

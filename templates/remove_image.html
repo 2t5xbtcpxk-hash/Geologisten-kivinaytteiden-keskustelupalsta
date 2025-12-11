@@ -3,12 +3,10 @@
 {% block content %}
 
 <link rel="stylesheet" href="/static/main.css">
-
 <p>
-  Haluatko varmasti poistaa lisätyn näytteen?
+  Haluatko varmasti poistaa lisätyn kuvan?
 </p>
-
-<form action="/remove_thread/{{ thread.id }}" method="post">
+<form action="/remove_image/{{ image.id }}" method="post">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" name="continue" value="Jatka" />
   <input type="submit" name="cancel" value="Peruuta" />

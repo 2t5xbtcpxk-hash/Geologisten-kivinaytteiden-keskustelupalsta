@@ -6,7 +6,7 @@
 
 <form action="/edit/{{ message.id }}" method="post">
   <p>
-    Viesti:<br />
+    <label for="content"> Kommentti:</label> <br />
     <textarea name="content" rows="5" cols="40" maxlength="1000" required>{{ message.content }}</textarea>  <br />
     Max. 1000 merkkiä
   </p>
@@ -15,7 +15,7 @@
 </form>
 
 <p>
-  <a style="color:rgb(226, 226, 226)" href="/thread/{{ message.thread_id }}">Takaisin keskusteluun</a>
+  <a style="color:rgb(226, 226, 226)" href="/thread/{{ message.thread_id }}">Takaisin näytesivulle</a>
 </p>
 
 {% endblock %}

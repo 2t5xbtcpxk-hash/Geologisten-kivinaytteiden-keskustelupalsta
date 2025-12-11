@@ -16,13 +16,11 @@ def get_threads(page, page_size):
     return db.query(sql, [limit, offset])
 
 def add_thread(title, comment, user_id, rock_type, rock,
-               latitude, longitude, collection_date, sample_image):
+               latitude, longitude, collection_date):
     sql = """INSERT INTO threads (title, comment, user_id, classes_id, rock, latitude, longitude, collection_date)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
     db.execute(sql, [title, comment, user_id, rock_type, rock, latitude, longitude, collection_date])
     thread_id = db.last_insert_id()
-    sql2 = "INSERT INTO images (thread_id, sample_image) VALUES (?, ?)"
-    db.execute(sql2, [thread_id, sample_image])
     return thread_id
     
 def add_message(content, user_id, thread_id):
@@ -30,8 +28,13 @@ def add_message(content, user_id, thread_id):
              VALUES (?, datetime('now'), ?, ?)"""
     db.execute(sql, [content, user_id, thread_id])
 
+def add_image(thread_id, sample_image, user_id):
+    sql = """INSERT INTO images (thread_id, sample_image, user_id) 
+              VALUES (?, ?, ?)"""
+    db.execute(sql, [thread_id, sample_image, user_id])
+
 def get_thread(thread_id):
-    sql = """SELECT t.id, t.title, t.comment, t.user_id, t.rock, c.rocktype rocktype,
+    sql = """SELECT t.id, t.title, t.comment, t.user_id user_id, t.rock, c.rocktype rocktype,
              t.latitude, t.longitude, t.collection_date 
              FROM threads t LEFT JOIN classes c
                             ON t.classes_id = c.id
@@ -82,8 +85,6 @@ def update_thread(thread_id, title, comment, rock, rock_type, latitude, longitud
     db.execute(sql, [longitude, thread_id])
     sql = "UPDATE threads SET collection_date = ? WHERE id = ?"
     db.execute(sql, [collection_date, thread_id])
-    sql = "UPDATE images SET sample_image = ? WHERE thread_id = ?"
-    db.execute(sql, [image_file, thread_id])
 
 def update_thread_no_image(thread_id, title, comment, rock, rock_type, latitude, longitude, collection_date):
     sql = "UPDATE threads SET title = ? WHERE id = ?"
@@ -123,13 +124,35 @@ def get_user(user_id):
     result = db.query(sql, [user_id])
     return result[0]
 
-def get_image(thread_id):
-    sql = """SELECT id, sample_image, thread_id
+def get_images(thread_id):
+    sql = """SELECT id
              FROM images
              WHERE thread_id = ?"""
     result = db.query(sql, [thread_id])
-    return result[0][0]
+    return result
+
+def get_image(image_id):
+    sql = """SELECT id, sample_image, thread_id
+             FROM images
+             WHERE id = ?"""
+    result = db.query(sql, [image_id])
+    return result[0][1] if result else None
+
+def get_image2(image_id):
+    sql = """SELECT id, user_id, thread_id
+             FROM images
+             WHERE id = ?"""
+    result = db.query(sql, [image_id])
+    return result[0]
+
+def remove_image(image_id):
+    sql = "DELETE FROM images WHERE id = ?"
+    db.execute(sql, [image_id])
 
 def thread_count():
     sql = "SELECT COUNT(*) FROM threads"
     return db.query(sql)[0][0]
+
+def thread_image_count(thread_id):
+    sql = "SELECT IFNULL(COUNT(*), 0) FROM images WHERE thread_id = ?"
+    return db.query(sql, [thread_id])[0][0]

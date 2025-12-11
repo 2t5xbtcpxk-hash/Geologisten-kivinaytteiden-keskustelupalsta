@@ -16,7 +16,7 @@
 
   <form action="/search" method="get">
     <p>
-      Hakusana:
+      <label for="query"> Hakusana:</label>
       {% if query %}
       <input type="text" name="query" value="{{ query }}" />
       {% else %}
