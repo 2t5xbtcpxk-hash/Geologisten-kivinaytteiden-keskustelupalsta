@@ -39,7 +39,7 @@ def get_threads(user_id, page, page_size):
     return result if result else None
 
 def user_thread_count(user_id):
-    sql = """SELECT COUNT(*) 
+    sql = """SELECT COUNT(*)
              FROM threads 
              WHERE user_id = ?"""
     return db.query(sql, [user_id])[0][0]

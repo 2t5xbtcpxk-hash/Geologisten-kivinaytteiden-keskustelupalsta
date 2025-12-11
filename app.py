@@ -1,15 +1,15 @@
+import secrets
+import sqlite3
+import math
+import time
+from datetime import date
+from werkzeug.security import generate_password_hash
+import markupsafe
 from flask import Flask
 from flask import redirect, render_template, request, session, abort, flash, make_response, g
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
-import secrets
 import config
-import sqlite3
 import db, users, forum
-import markupsafe
-import math
-from datetime import date, datetime
-import time
+
 
 # Connect to database
 con = sqlite3.connect("database.db")
@@ -32,13 +32,12 @@ def index(page=1):
         return redirect("/1")
     if page > page_count:
         return redirect("/" + str(page_count))
-    
     if "user_id" not in session:
         return render_template("main.html", threads = forum.get_threads(page, page_size),
                                page=page, page_count=page_count)
-    else:    
+    else:
         user_id = session["user_id"]
-        return render_template("main.html", threads = forum.get_threads(page, page_size), 
+        return render_template("main.html", threads = forum.get_threads(page, page_size),
                                user = forum.get_user(user_id),
                                page=page, page_count=page_count, current_date=current_date)
 
@@ -92,7 +91,7 @@ def create():
         flash("VIRHE: Käyttäjänimi on jo varattu.")
         session["filled"] = {"username": username}
         return redirect("/register")
-    
+
     if len(password1) < 5 or len(password1) > 15 or len(password2) < 5 or len(password2) > 15:
         flash("VIRHE: Salasana on väärän mittainen")
 
@@ -136,7 +135,8 @@ def new_thread():
     if not rock_type:
         abort(403)
 
-    thread_id = forum.add_thread(title, comment, user_id, rock_type, rock, latitude, longitude, collection_date)
+    thread_id = forum.add_thread(title, comment, user_id, rock_type, rock,
+                                 latitude, longitude, collection_date)
     return redirect("/thread/" + str(thread_id))
 
 @app.route("/thread/<int:thread_id>")
@@ -149,7 +149,7 @@ def show_thread(thread_id):
     images = forum.get_images(thread_id)
 
     messages = forum.get_messages(thread_id)
-    
+
     return render_template("thread.html", thread=thread, messages=messages,
                            images=images)
 
@@ -199,10 +199,7 @@ def new_message():
     if not content or len(content) > 1000:
         abort(403)
 
-    try:
-        forum.add_message(content, user_id, thread_id)
-    except:
-        abort(403)
+    forum.add_message(content, user_id, thread_id)
 
     return redirect("/thread/" + str(thread_id))
 
@@ -230,17 +227,17 @@ def edit_message(message_id):
 
         forum.update_message(message["id"], content)
         return redirect("/thread/" + str(message["thread_id"]))
-    
+
 @app.route("/remove/<int:message_id>", methods=["GET", "POST"])
 def remove_message(message_id):
 
     require_login()
 
     message = forum.get_message(message_id)
-    
+
     if not message:
         abort(404)
-    
+
     check_user(message["user_id"])
 
     if request.method == "GET":
@@ -251,7 +248,7 @@ def remove_message(message_id):
         if "continue" in request.form:
             forum.remove_message(message["id"])
         return redirect("/thread/" + str(message["thread_id"]))
-    
+
 @app.route("/remove_thread/<int:thread_id>", methods=["GET", "POST"])
 def remove_thread(thread_id):
 
@@ -272,7 +269,7 @@ def remove_thread(thread_id):
         if "continue" in request.form:
             forum.remove_thread(thread["id"])
         return redirect("/")
-    
+
 @app.route("/edit_thread/<int:thread_id>", methods=["GET", "POST"])
 def edit_thread(thread_id):
 
@@ -296,7 +293,6 @@ def edit_thread(thread_id):
         latitude = request.form["latitude"]
         longitude = request.form["longitude"]
         collection_date = request.form["collection_date"]
-        image_file = request.files["image"]
         check_csrf()
 
         if not comment or len(comment) > 1000:
@@ -317,13 +313,13 @@ def edit_thread(thread_id):
         if not rock_type:
             abort(403)
 
-        if not image_file:
-            forum.update_thread_no_image(thread["id"], title, comment, rock, rock_type, latitude, longitude, collection_date)
-        else:
-            forum.update_thread(thread["id"], title, comment, rock, rock_type, latitude, longitude, collection_date, image_file)
-            
-        return redirect("/")
-    
+        forum.update_thread_no_image(thread["id"],
+                                     title, comment,
+                                     rock, rock_type, latitude,
+                                     longitude, collection_date)
+
+        return redirect("/thread/" + str(thread_id))
+
 @app.route("/search")
 def search():
     query = request.args.get("query")
@@ -354,9 +350,9 @@ def show_user(user_id, page=1):
         return redirect("/user/" + str(user_id) + "/" + str(page_count))
 
     threads = users.get_threads(user_id, page=page, page_size=page_size)
-    return render_template("user.html", user=user, threads=threads, 
+    return render_template("user.html", user=user, threads=threads,
                            page=page, page_count=page_count, thread_count=thread_count)
-    
+
 @app.route("/add_image", methods=["POST"])
 def add_image():
 
@@ -368,11 +364,11 @@ def add_image():
     thread_id = request.form["thread_id"]
     image_count = forum.thread_image_count(thread_id)
     print(image_count)
-    
+
     if image_count > 4:
         flash("VIRHE: Maksimissaan 5 kuvaa per näyte")
         return redirect("/thread/" + str(thread_id))
-    
+
     if not image_file.filename.endswith(".jpg"):
         flash("VIRHE: väärä tiedostomuoto")
         return redirect("/thread/" + str(thread_id))
@@ -382,11 +378,8 @@ def add_image():
             flash("VIRHE: liian suuri kuva")
             return redirect("/thread/" + str(thread_id))
         else:
-            try:
-                forum.add_image(thread_id, image, user_id)
-                return redirect("/thread/" + str(thread_id))
-            except:
-                abort(403)
+            forum.add_image(thread_id, image, user_id)
+            return redirect("/thread/" + str(thread_id))
 
 @app.template_filter()
 def show_lines(content):

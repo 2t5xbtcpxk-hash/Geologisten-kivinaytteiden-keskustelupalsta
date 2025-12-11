@@ -2,7 +2,7 @@ import db
 
 
 def get_threads(page, page_size):
-    sql = """SELECT t.id id, t.user_id user_id, t.title, c.rocktype rocktype, t.rock rock, 
+    sql = """SELECT t.id id, t.user_id user_id, t.title, c.rocktype rocktype, t.rock rock,
              IFNULL(COUNT(m.id), 0) total, IFNULL(MAX(m.sent_at), "-") last
              FROM threads t LEFT JOIN messages m
                             ON t.id = m.thread_id
@@ -17,19 +17,22 @@ def get_threads(page, page_size):
 
 def add_thread(title, comment, user_id, rock_type, rock,
                latitude, longitude, collection_date):
-    sql = """INSERT INTO threads (title, comment, user_id, classes_id, rock, latitude, longitude, collection_date)
+    sql = """INSERT INTO threads (title, comment, user_id,
+                                  classes_id, rock, latitude,
+                                  longitude, collection_date)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
-    db.execute(sql, [title, comment, user_id, rock_type, rock, latitude, longitude, collection_date])
+    db.execute(sql, [title, comment, user_id, rock_type,
+                     rock, latitude, longitude, collection_date])
     thread_id = db.last_insert_id()
     return thread_id
-    
+
 def add_message(content, user_id, thread_id):
     sql = """INSERT INTO messages (content, sent_at, user_id, thread_id)
              VALUES (?, datetime('now'), ?, ?)"""
     db.execute(sql, [content, user_id, thread_id])
 
 def add_image(thread_id, sample_image, user_id):
-    sql = """INSERT INTO images (thread_id, sample_image, user_id) 
+    sql = """INSERT INTO images (thread_id, sample_image, user_id)
               VALUES (?, ?, ?)"""
     db.execute(sql, [thread_id, sample_image, user_id])
 
@@ -68,7 +71,8 @@ def remove_thread(thread_id):
     sql = "DELETE FROM threads WHERE id = ?"
     db.execute(sql, [thread_id])
 
-def update_thread(thread_id, title, comment, rock, rock_type, latitude, longitude, collection_date, image_file):
+def update_thread(thread_id, title, comment, rock,
+                  rock_type, latitude, longitude, collection_date):
     sql = "UPDATE threads SET title = ? WHERE id = ?"
     db.execute(sql, [title, thread_id])
     sql = "UPDATE threads SET comment = ? WHERE id = ?"
@@ -86,7 +90,8 @@ def update_thread(thread_id, title, comment, rock, rock_type, latitude, longitud
     sql = "UPDATE threads SET collection_date = ? WHERE id = ?"
     db.execute(sql, [collection_date, thread_id])
 
-def update_thread_no_image(thread_id, title, comment, rock, rock_type, latitude, longitude, collection_date):
+def update_thread_no_image(thread_id, title, comment, rock,
+                           rock_type, latitude, longitude, collection_date):
     sql = "UPDATE threads SET title = ? WHERE id = ?"
     db.execute(sql, [title, thread_id])
     sql = "UPDATE threads SET comment = ? WHERE id = ?"
