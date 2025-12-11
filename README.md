@@ -47,6 +47,7 @@ Huomioi, että sivustolle täytyy olla kirjautunut, jotta voi tehdä lisäyksiä
     * Keräyspäivämäärä 21.10.2024
     * Kivilaji: Graniitti
     * Kuvaus: Felsinen syväkivi Helsingin alueelta. Aksessorisena mineraalina fluoriitti.
+    
 2. 
     * Näytetunnus: BBKR-745
     * Kivityyppi: Metamorfinen kivi
