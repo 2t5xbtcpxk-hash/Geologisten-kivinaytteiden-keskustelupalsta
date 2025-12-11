@@ -106,3 +106,69 @@ forum.py:161:0: C0116: Missing function or method docstring (missing-function-do
 ------------------------------------------------------------------
 Your code has been rated at 7.30/10 (previous run: 7.10/10, +0.20)
 ```
+
+Käydään ilmoitukset läpi:
+
+## Docstring-ilmoitukset
+
+Suuri osa ilmoituksista ovat seuraavan tyyppisiä:
+
+```
+app.py:45:0: C0116: Missing function or method docstring (missing-function-docstring)
+forum.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+```
+
+Tässä ilmoitetaan ettei moduuleissa tai functiossa ole docstring-kommentteja. Nämä on tietoisesti jätetty pois.
+
+## Tarpeeton else
+
+Raportissa on seuraavia ilmoituksia liittyen `else`-haaroihin:
+
+```
+app.py:379:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+app.py:379:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+```
+
+Koodin näissä osioissa voisi kirjoittaa tiiviimmin, mutta koodin selkeyden kannalta on tehty päätös, että käytetään useampia else-haarjoa
+
+## Puuttuva palautusarvo
+
+```
+app.py:232:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+app.py:253:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+```
+
+Nämä ilmoitukset liittyvät funtiooihin, joissa käytetään ["GET] ja ["POST] metodeja. Funtiossa on kuitenkin määritelty, että tälle tulee antaa jompi kumpi, joten tilannetta jossa funtio ei palauta arvoa ei voi tapahtua.
+
+## Vaarallinen oletusarvo
+
+```
+db.py:20:0: W0102: Dangerous default value [] as argument (dangerous-default-value)
+```
+
+db.py tiedostossa on tyhjiä listoja oletusolioina, mutta kun koodissa ei ole muita listaolijoita niin tästä ei ole riskiä.
+
+## Vakion nimi
+
+```
+config.py:1:0: C0103: Constant name "secret_key" doesn't conform to UPPER_CASE naming style (invalid-name)
+```
+
+config.py:ssä on nimetty muuttuja secret_key, joka pitäisi nimetä isoilla kirjaimilla. Tämä kuitenkin toteutettu kurssin materiaalin mukaisesti, joten en näe tässä ongelmaa.
+
+## Importit samalla rivillä
+
+```
+app.py:11:0: C0410: Multiple imports on one line (db, users, forum) (multiple-imports)
+```
+
+Varoitetaan useasta tuonnista samalla rivillä, en näe tässä ongelmaa.
+
+## Liian monta muuttujaa
+
+```
+forum.py:18:0: R0913: Too many arguments (8/5) (too-many-arguments)
+```
+
+Tässä varoitetaan liian monesta argumentista. Huomioiden tietokannan rakenteen en keksinyt muuta tapaa tehdä tätä.
+Toki argumentit voisi antaa listana, joka puretaan funktion sisällä. Kuitenkin tämä mielestäni toisi koodiin turhia rivejä ja monimutkaisuutta.
