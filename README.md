@@ -60,12 +60,14 @@ Esimerkkikuvat ovat kansiossa `Example images` nimettynä näytetunnusten mukais
 Kuvat ovat Wikipediasta Creative Commons lisenssillä. Linkit alkuperäisiin tässä:
 
 Fylliitin kuvat:
-[Link Text](https://commons.wikimedia.org/wiki/File:Phyllite_%28French_Slate,_Paleoproterozoic;_Snowy_Range_Road_roadcut,_Medicine_Bow_Mountains,_Wyoming,_USA%29_12_%2845625221651%29.jpg)
 
-[Link Text](https://commons.wikimedia.org/wiki/File:Phyllite_%28French_Slate,_Paleoproterozoic;_Snowy_Range_Road_roadcut,_Medicine_Bow_Mountains,_Wyoming,_USA%29_2_%2844711620975%29.jpg)
+[Linkki kuvaan](https://commons.wikimedia.org/wiki/File:Phyllite_%28French_Slate,_Paleoproterozoic;_Snowy_Range_Road_roadcut,_Medicine_Bow_Mountains,_Wyoming,_USA%29_12_%2845625221651%29.jpg)
+
+[Linkki kuvaan](https://commons.wikimedia.org/wiki/File:Phyllite_%28French_Slate,_Paleoproterozoic;_Snowy_Range_Road_roadcut,_Medicine_Bow_Mountains,_Wyoming,_USA%29_2_%2844711620975%29.jpg)
 
 Graniitin kuva:
-[Link Text](https://commons.wikimedia.org/wiki/File:Biotite_Granite_-_Igneous_Rock.jpg)
+
+[Linkki kuvaan](https://commons.wikimedia.org/wiki/File:Biotite_Granite_-_Igneous_Rock.jpg)
 
 
 Suurta tietomäärää on testattu `seed.py` tiedostolla. `seed.py` luo tuhat käyttäjää, miljoona näytettä ja kymmenen miljoonaa kommenttia.
