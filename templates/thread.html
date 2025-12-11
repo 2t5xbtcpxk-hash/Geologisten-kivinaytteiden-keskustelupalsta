@@ -35,7 +35,7 @@
     {% if thread.user_id == session.user_id %}
       <form action="/add_image" method="post" enctype="multipart/form-data">
         <p>
-          <label for="image"> Kuva:</label><input type="file" name="image" accept=".jpg"/>
+          <label for="image"> Kuva (max 5MB):</label><input type="file" name="image" accept=".jpg"/>
         </p>
         <input type="hidden" name="thread_id" value="{{ thread.id }}" />
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

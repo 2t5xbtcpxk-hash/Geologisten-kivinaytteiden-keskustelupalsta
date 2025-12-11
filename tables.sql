@@ -36,3 +36,6 @@ CREATE TABLE IF NOT EXISTS classes (
     title TEXT,
     rocktype TEXT
 );
+
+CREATE INDEX idx_thread_messages ON messages (thread_id);
+CREATE INDEX idx_thread_images ON images (thread_id);

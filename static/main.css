@@ -79,6 +79,6 @@ nav li:not(:last-of-type) {
 
 img {
   border-radius: 8px;
-  max-height: 150px;
-  max-width: 200px;
+  max-height: 300px;
+  max-width: 400px;
 }

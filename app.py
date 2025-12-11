@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import redirect, render_template, request, session, abort, flash, make_response
+from flask import redirect, render_template, request, session, abort, flash, make_response, g
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 import secrets
@@ -9,6 +9,7 @@ import db, users, forum
 import markupsafe
 import math
 from datetime import date, datetime
+import time
 
 # Connect to database
 con = sqlite3.connect("database.db")
@@ -22,7 +23,7 @@ def index(page=1):
     #check_csrf()
 
     thread_count = forum.thread_count()
-    page_size = 10
+    page_size = 5
     page_count = math.ceil(thread_count / page_size)
     page_count = max(page_count, 1)
     current_date = current_date=date.today().isoformat()
@@ -377,7 +378,7 @@ def add_image():
         return redirect("/thread/" + str(thread_id))
     else:
         image = image_file.read()
-        if len(image) > 2560 * 1920:
+        if len(image) > 4000 * 3000:
             flash("VIRHE: liian suuri kuva")
             return redirect("/thread/" + str(thread_id))
         else:
@@ -405,5 +406,16 @@ def check_csrf():
         abort(403)
 
 def check_user(user):
+
     if user != session["user_id"]:
         abort(403)
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    elapsed_time = round(time.time() - g.start_time, 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
